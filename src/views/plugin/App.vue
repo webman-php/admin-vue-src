@@ -82,7 +82,6 @@
   import { BasicTable, useTable } from '/@/components/Table';
   import { apiPost, apiGet, getApi } from '/@/api/common';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { usePermission } from '/@/hooks/web/usePermission';
   import ModalLogin from './Login.vue';
   import { useModal } from '/@/components/Modal';
   import { Modal } from 'ant-design-vue';
@@ -106,7 +105,6 @@
     setup() {
       const { createMessage } = useMessage();
       const { success, error } = createMessage;
-      const { refreshMenu } = usePermission();
       const [register, { openModal: openModal }] = useModal();
       const [openFullLoading, closeFullLoading] = useLoading({
         tip: '处理中...',
@@ -140,29 +138,47 @@
           return;
         }
         openFullLoading();
-        setTimeout(() => {
+        try {
+          const result = await apiPost(
+            '/app/admin/plugin/app/install',
+            {
+              name,
+              version,
+            },
+            {
+              timeout: 60000,
+            },
+          );
+          if (result.code == 401) {
+            openModal();
+            return;
+          }
+          if (result.code) {
+            error(result.message);
+            return;
+          }
+          success('安装成功');
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+        } catch (e) {
+        } finally {
           closeFullLoading();
-        }, 30000);
-        const result = await apiPost('/app/admin/plugin/app/install', { name, version });
-        closeFullLoading();
-        if (result.code == 401) {
-          openModal();
-          return;
         }
-        if (result.code) {
-          error(result.message);
-          return;
-        }
-        //reload();
-        //refreshMenu();
-        location.reload();
-        success('安装成功');
       }
 
       async function uninstall(name, version) {
-        await apiPost('/app/admin/plugin/app/uninstall', { name, version });
-        reload();
-        refreshMenu();
+        try {
+          openFullLoading();
+          await apiPost('/app/admin/plugin/app/uninstall', { name, version });
+        } catch (e) {
+          closeFullLoading();
+          return;
+        }
+        closeFullLoading();
+        setTimeout(() => {
+          location.reload();
+        }, 1000);
         success('卸载成功');
       }
 
