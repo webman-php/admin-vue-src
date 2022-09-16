@@ -4,7 +4,7 @@ import { defineStore } from 'pinia';
 import { store } from '/@/store';
 import { RoleEnum } from '/@/enums/roleEnum';
 import { PageEnum } from '/@/enums/pageEnum';
-import { ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
+import { API_TOKEN_KEY, ROLES_KEY, TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import { GetUserInfoModel, LoginParams } from '/@/api/common/model/accountModel';
 import { doLogout, getUserInfo, loginApi } from '/@/api/common/account';
@@ -20,6 +20,7 @@ import { h } from 'vue';
 interface UserState {
   userInfo: Nullable<UserInfo>;
   token?: string;
+  apiToken?: string;
   roleList: RoleEnum[];
   sessionTimeout?: boolean;
   lastUpdateTime: number;
@@ -32,6 +33,8 @@ export const useUserStore = defineStore({
     userInfo: null,
     // token
     token: undefined,
+    // api-token
+    apiToken: undefined,
     // roleList
     roleList: [],
     // Whether the login expired
@@ -45,6 +48,9 @@ export const useUserStore = defineStore({
     },
     getToken(): string {
       return this.token || getAuthCache<string>(TOKEN_KEY);
+    },
+    getApiToken(): string {
+      return this.apiToken || getAuthCache<string>(API_TOKEN_KEY);
     },
     getRoleList(): RoleEnum[] {
       return this.roleList.length > 0 ? this.roleList : getAuthCache<RoleEnum[]>(ROLES_KEY);
@@ -61,6 +67,10 @@ export const useUserStore = defineStore({
       this.token = info ? info : ''; // for null or undefined value
       setAuthCache(TOKEN_KEY, info);
     },
+    setApiToken(info: string | undefined) {
+      this.apiToken = info ? info : ''; // for null or undefined value
+      setAuthCache(API_TOKEN_KEY, info);
+    },
     setRoleList(roleList: RoleEnum[]) {
       this.roleList = roleList;
       setAuthCache(ROLES_KEY, roleList);
@@ -76,6 +86,7 @@ export const useUserStore = defineStore({
     resetState() {
       this.userInfo = null;
       this.token = '';
+      this.apiToken = '';
       this.roleList = [];
       this.sessionTimeout = false;
     },
@@ -148,6 +159,7 @@ export const useUserStore = defineStore({
         }
       }
       this.setToken(undefined);
+      this.setApiToken(undefined);
       this.setSessionTimeout(false);
       this.setUserInfo(null);
       goLogin && router.push(PageEnum.BASE_LOGIN);

@@ -41,7 +41,6 @@
               @click="showConfirmUninstall(record.name, record.installed)"
               >卸载</a-button
             >
-            <template v-else>-</template>
           </template>
           <template v-else>
             <a-button type="success" size="small" @click="install(record.name, record.version)"
@@ -87,6 +86,7 @@
   import ModalLogin from './Login.vue';
   import { useModal } from '/@/components/Modal';
   import { Modal } from 'ant-design-vue';
+  import { useLoading } from '/@/components/Loading';
 
   const selectUrl = '/app/admin/plugin/app/list';
   const schemaUrl = '/app/admin/plugin/app/schema';
@@ -108,6 +108,9 @@
       const { success, error } = createMessage;
       const { refreshMenu } = usePermission();
       const [register, { openModal: openModal }] = useModal();
+      const [openFullLoading, closeFullLoading] = useLoading({
+        tip: '处理中...',
+      });
 
       onBeforeMount(async () => {
         setColumns(await apiGet(schemaUrl));
@@ -136,7 +139,12 @@
         if (installed == version) {
           return;
         }
+        openFullLoading();
+        setTimeout(() => {
+          closeFullLoading();
+        }, 30000);
         const result = await apiPost('/app/admin/plugin/app/install', { name, version });
+        closeFullLoading();
         if (result.code == 401) {
           openModal();
           return;
@@ -145,8 +153,9 @@
           error(result.message);
           return;
         }
-        reload();
-        refreshMenu();
+        //reload();
+        //refreshMenu();
+        location.reload();
         success('安装成功');
       }
 
