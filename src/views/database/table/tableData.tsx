@@ -1,36 +1,36 @@
-import {FormSchema} from '/@/components/Table';
+import { FormSchema } from '/@/components/Table';
 
 export const typeToControlMap = [
-  {"integer": "InputNumber"},
-  {"string": "Input"},
-  {"text": "InputTextArea"},
-  {"date": "DatePicker"},
-  {"enum": "Select"},
-  {"float": "Input"},
-  {"tinyInteger": "InputNumber"},
-  {"smallInteger": "InputNumber"},
-  {"mediumInteger": "InputNumber"},
-  {"bigInteger": "InputNumber"},
-  {"unsignedInteger": "InputNumber"},
-  {"unsignedTinyInteger": "InputNumber"},
-  {"unsignedSmallInteger": "InputNumber"},
-  {"unsignedMediumInteger": "InputNumber"},
-  {"unsignedBigInteger": "InputNumber"},
-  {"decimal": "Input"},
-  {"double": "Input"},
-  {"mediumText": "InputTextArea"},
-  {"longText": "InputTextArea"},
-  {"dateTime": "DatePicker"},
-  {"time": "DatePicker"},
-  {"timestamp": "DatePicker"},
-  {"char": "Input"},
-  {"binary": "Input"}
+  { integer: 'InputNumber' },
+  { string: 'Input' },
+  { text: 'InputTextArea' },
+  { date: 'DatePicker' },
+  { enum: 'Select' },
+  { float: 'Input' },
+  { tinyInteger: 'InputNumber' },
+  { smallInteger: 'InputNumber' },
+  { mediumInteger: 'InputNumber' },
+  { bigInteger: 'InputNumber' },
+  { unsignedInteger: 'InputNumber' },
+  { unsignedTinyInteger: 'InputNumber' },
+  { unsignedSmallInteger: 'InputNumber' },
+  { unsignedMediumInteger: 'InputNumber' },
+  { unsignedBigInteger: 'InputNumber' },
+  { decimal: 'Input' },
+  { double: 'Input' },
+  { mediumText: 'InputTextArea' },
+  { longText: 'InputTextArea' },
+  { dateTime: 'DatePicker' },
+  { time: 'DatePicker' },
+  { timestamp: 'DatePicker' },
+  { char: 'Input' },
+  { binary: 'Input' },
 ];
 
 const options: any[] = [];
 
-for (let item of typeToControlMap) {
-  for (let type in item) {
+for (const item of typeToControlMap) {
+  for (const type in item) {
     options.push({
       label: type,
       value: type,
@@ -40,8 +40,7 @@ for (let item of typeToControlMap) {
   }
 }
 
-export function typeToControl(type: string)
-{
+export function typeToControl(type: string) {
   return typeToControlMap[type] || 'Input';
 }
 
@@ -92,7 +91,7 @@ export const controlSelectOptions = [
   },
 ];
 
-export const defaultTableSchemas :FormSchema[] = [
+export const defaultTableSchemas: FormSchema[] = [
   {
     field: 'name',
     component: 'Input',
@@ -113,7 +112,7 @@ export const defaultTableSchemas :FormSchema[] = [
   },
 ];
 
-export const fieldSchemas: FormSchema[]  = [
+export const fieldSchemas: FormSchema[] = [
   {
     field: 'field',
     component: 'Input',
@@ -144,7 +143,7 @@ export const fieldSchemas: FormSchema[]  = [
       span: 3,
     },
     componentProps: {
-      placeholder: '长度',
+      placeholder: '长度/值',
     },
   },
   {
@@ -239,13 +238,13 @@ export const defaultKeySchemas: FormSchema[] = [
       options: [
         {
           label: 'normal',
-          value: 'normal'
+          value: 'normal',
         },
         {
           label: 'unique',
-          value: 'unique'
-        }
-      ]
+          value: 'unique',
+        },
+      ],
     },
     defaultValue: 'normal',
   },
@@ -257,7 +256,7 @@ export const defaultKeySchemas: FormSchema[] = [
       span: 2,
     },
     slot: 'add',
-  }
+  },
 ];
 
 export function getDefaultFieldSchemas(): FormSchema[] {
@@ -296,7 +295,7 @@ export function getDefaultFieldSchemas(): FormSchema[] {
       },
       defaultValue: '11',
       componentProps: {
-        placeholder: '长度',
+        placeholder: '长度/值',
       },
     },
     {
@@ -392,7 +391,7 @@ export function getDefaultFieldSchemas(): FormSchema[] {
         span: 3,
       },
       componentProps: {
-        placeholder: '长度',
+        placeholder: '长度/值',
       },
     },
     {
@@ -487,7 +486,7 @@ export function getDefaultFieldSchemas(): FormSchema[] {
         span: 3,
       },
       componentProps: {
-        placeholder: '长度',
+        placeholder: '长度/值',
       },
     },
     {
@@ -549,4 +548,3 @@ export function getDefaultFieldSchemas(): FormSchema[] {
     },
   ];
 }
-

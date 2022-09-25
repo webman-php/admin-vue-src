@@ -15,9 +15,8 @@
   import { BasicForm, FormActionType, FormSchema } from '/@/components/Form/index';
   import { BasicModal, useModalInner } from '/@/components/Modal';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { uploadApi } from '/@/api/common/upload';
   import { apiGet, apiPost } from '/@/api/common';
-  import { treeApi } from '/@/api/common/tree';
+  import { typeToComponent } from '/@/views/database/table/util';
 
   const formElRef = ref<Nullable<FormActionType>>(null);
   const selectUrl = ref('');
@@ -70,7 +69,7 @@
             continue;
           }
           let value = type.value == 'edit' ? row[schema.field] : columns[schema.field].default;
-          let [component, props, defaultValue] = typeToComponent(schema, value);
+          let [component, props, defaultValue] = typeToComponent(schema, value, type.value);
           if (schema.field == 'password') {
             defaultValue = '';
             if (type.value == 'edit') props = { placeholder: '不更新密码请留空' };
@@ -97,83 +96,6 @@
       });
       const { createMessage } = useMessage();
       const { success } = createMessage;
-
-      function typeToComponent(schema, defaultValue) {
-        defaultValue = convert(defaultValue);
-        let props = {
-          disabled: type.value == 'edit' ? false : schema.readonly,
-        };
-        if (schema.control == 'Switch') {
-          defaultValue = !!defaultValue;
-        }
-        if (schema.control == 'DatePicker') {
-          props['showTime'] = true;
-        }
-
-        if (schema.control == 'ApiTreeSelect' || schema.control == 'ApiTree') {
-          props['resultField'] = 'list';
-          if (defaultValue) {
-            if (props['multiple']) {
-              if (typeof defaultValue != 'number') defaultValue = defaultValue.split(',');
-            }
-            //props['selectedKeys'] = defaultValue; // 设置selectedKeys后无法选中
-          }
-        }
-        // 设置控件相关属性
-        if (schema.control_args) {
-          for (let item of schema.control_args.split(';')) {
-            let pos = item.indexOf(':');
-            if (pos == -1) continue;
-            let name = item.substring(0, pos).trim();
-            let values = item.substring(pos + 1).trim();
-            if (schema.control == 'Upload' && name === 'url') {
-              props['api'] = uploadApi(values);
-              continue;
-            }
-            if (
-              (schema.control == 'ApiTreeSelect' || schema.control == 'ApiTree') &&
-              name === 'url'
-            ) {
-              props['api'] = treeApi(values);
-              continue;
-            }
-            // value = a:v,c:d
-            pos = values.indexOf(':');
-            if (pos !== -1) {
-              let options = values.split(',');
-              values = [];
-              for (let option of options) {
-                let [value, label] = option.split(':');
-                values.push({ value, label });
-              }
-            }
-            props[name] = convert(values);
-          }
-        }
-
-        if (schema.control == 'Upload') {
-          if (defaultValue) {
-            defaultValue = defaultValue.split(',');
-            props['value'] = defaultValue;
-          } else {
-            props['value'] = [];
-          }
-          if (!props['api']) {
-            props['api'] = uploadApi();
-          }
-        }
-
-        return [schema.control, props, defaultValue];
-      }
-
-      function convert(value) {
-        if (value === 'true') return true;
-        if (value === 'false') return false;
-        if (String(Number(value)) === value) {
-          return Number(value);
-        }
-        return value;
-      }
 
       const handleSubmit = async () => {
         try {
