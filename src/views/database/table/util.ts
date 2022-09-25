@@ -49,9 +49,14 @@ export function typeToComponent(schema, defaultValue, scene) {
         props['api'] = uploadApi(values);
         continue;
       }
-      if ((control == 'ApiTreeSelect' || control == 'ApiTree') && name === 'url') {
+      if (control == 'Select' && name == 'url') {
+        control = 'ApiSelect';
+      }
+      if (
+        (control == 'ApiTreeSelect' || control == 'ApiTree' || control == 'ApiSelect') &&
+        name === 'url'
+      ) {
         props['api'] = treeApi(values);
-        continue;
       }
       // value = a:v,c:d
       pos = values.indexOf(':');
