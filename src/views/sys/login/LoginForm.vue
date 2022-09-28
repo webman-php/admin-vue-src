@@ -38,26 +38,22 @@
           />
         </a-col>
         <a-col>
-          <img :src="captchaUrl" @click="switchCatpcha"/>
+          <img :src="captchaUrl" @click="switchCatpcha" />
         </a-col>
       </a-row>
-
     </FormItem>
-
 
     <FormItem class="enter-x">
       <Button type="primary" size="large" block @click="handleLogin" :loading="loading">
         {{ t('sys.login.loginButton') }}
       </Button>
     </FormItem>
-
-
   </Form>
 </template>
 <script lang="ts" setup>
   import { reactive, ref, unref, computed } from 'vue';
 
-  import { Checkbox, Form, Input, Row, Col, Button, Divider } from 'ant-design-vue';
+  import { Form, Input, Row, Col, Button } from 'ant-design-vue';
   import LoginFormTitle from './LoginFormTitle.vue';
 
   import { useI18n } from '/@/hooks/web/useI18n';
@@ -77,12 +73,11 @@
   const { prefixCls } = useDesign('login');
   const userStore = useUserStore();
 
-  const { setLoginState, getLoginState } = useLoginState();
+  const { getLoginState } = useLoginState();
   const { getFormRules } = useFormRules();
 
   const formRef = ref();
   const loading = ref(false);
-  const rememberMe = ref(false);
   const captchaUrl = ref('');
 
   const formData = reactive({
@@ -98,7 +93,7 @@
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN);
 
   function switchCatpcha() {
-    captchaUrl.value = '/app/admin/common/account/captcha?r=' + new Date().getTime()
+    captchaUrl.value = '/app/admin/common/account/captcha?r=' + new Date().getTime();
   }
 
   switchCatpcha();
@@ -106,9 +101,7 @@
   async function handleLogin() {
     const data = await validForm();
     if (!data) return;
-    const timer = setTimeout(() => {
-      switchCatpcha();
-    }, 2000);
+
     try {
       loading.value = true;
       const userInfo = await userStore.login({
@@ -117,7 +110,6 @@
         captcha: data.captcha,
         mode: 'none', //不要默认的错误提示
       });
-      clearTimeout(timer);
       if (userInfo) {
         notification.success({
           message: t('sys.login.loginSuccessTitle'),
@@ -128,6 +120,9 @@
         switchCatpcha();
       }
     } catch (error) {
+      setTimeout(() => {
+        switchCatpcha();
+      }, 2000);
       createErrorModal({
         title: t('sys.api.errorTip'),
         content: (error as unknown as Error).message || t('sys.api.networkExceptionMsg'),

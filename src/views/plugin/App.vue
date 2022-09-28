@@ -38,12 +38,17 @@
               type="danger"
               v-if="record.name !== 'admin'"
               size="small"
+              :disabled="record.disabled"
               @click="showConfirmUninstall(record.name, record.installed)"
               >卸载</a-button
             >
           </template>
           <template v-else>
-            <a-button type="success" size="small" @click="install(record.name, record.version)"
+            <a-button
+              type="success"
+              :disabled="record.disabled"
+              size="small"
+              @click="install(record.name, record.version)"
               >安装</a-button
             >
           </template>
@@ -52,6 +57,7 @@
             @click="install(record.name, record.version, record.installed)"
             size="small"
             :type="record.version === record.installed ? 'info' : 'success'"
+            :disabled="record.disabled"
             v-if="record.installed && record.releases && record.releases.length > 1"
           >
             {{ record.version === record.installed ? '降级' : '升级' }}
