@@ -74,6 +74,7 @@ export const step2Schemas: FormSchema[] = [
     field: 'password',
     component: 'InputPassword',
     label: '密码',
+    required: true,
     colProps: {
       span: 24,
     },
